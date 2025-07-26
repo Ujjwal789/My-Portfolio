@@ -1,8 +1,5 @@
 # 💼 Ujjwal Kumar Gupta — Personal Portfolio
 
-https://github.com/Ujjwal789/My-Portfolio.git
-
-
 Welcome to my personal portfolio website! This is a responsive, modern web portfolio that showcases my skills, projects, achievements, and contact information.
 
 🔗 **Live Website**: [https://ujjwal789.github.io/My-Portfolio/](https://ujjwal789.github.io/My-Portfolio/)
