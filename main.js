@@ -10,6 +10,7 @@ const projects = [
         id: 'project1',
         title: 'AI-Powered Meeting Notes Summarizer',
         image: 'assets/ai-notes summeriser.png',
+        badge: 'AI · Web App',
         details: {
             overview: 'A modern web app that converts meeting transcripts into concise AI-powered summaries. Paste or upload transcripts, generate summaries with customizable instructions, and email them directly — hosted on Vercel for fast access.',
             techStack: ['React.js', 'Next.js', 'Node.js', 'Groq API', 'Nodemailer', 'Vercel'],
@@ -27,6 +28,7 @@ const projects = [
         id: 'project2',
         title: 'EchoMind – Offline AI Voice Assistant',
         image: 'assets/Echo.png',
+        badge: 'AI · Desktop',
         details: {
             overview: 'EchoMind is a sophisticated, enterprise-grade conversational AI assistant combining NLP, voice interaction, file analysis, and multi-user capabilities. Built with a local LLM (Phi-3 Mini), Whisper STT, and Edge TTS — fully offline. No data ever leaves your machine.',
             techStack: ['Python', 'Flask', 'Phi-3 Mini', 'Whisper STT', 'Edge TTS / Piper', 'PyPDF2', 'pytesseract', 'JavaScript', 'Web Speech API'],
@@ -46,6 +48,7 @@ const projects = [
         id: 'project3',
         title: 'BTU Page – Real-Time Discussion Platform',
         image: 'assets/chat.PNG',
+        badge: 'Full Stack',
         details: {
             overview: 'BTU Page is a scalable, real-time discussion platform tailored for engineering students. It enables live conversations, project collaboration, and peer-to-peer support using modern full-stack technologies.',
             techStack: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'WebSocket', 'JWT'],
@@ -63,6 +66,7 @@ const projects = [
         id: 'project4',
         title: 'Multilingual FAQ System',
         image: 'assets/faq.PNG',
+        badge: 'Backend',
         details: {
             overview: 'A scalable and multilingual FAQ management platform built with Django. It enables storing, retrieving, and displaying FAQs in multiple languages with REST API support.',
             techStack: ['Django', 'Django REST Framework', 'PostgreSQL', 'Redis', 'Docker'],
@@ -80,6 +84,7 @@ const projects = [
         id: 'project5',
         title: 'Taal Taarang Dance Website',
         image: 'assets/d.PNG',
+        badge: 'Full Stack',
         details: {
             overview: 'Taal Taarang is a vibrant and interactive web platform for a professional dance academy, designed to showcase dance classes, instructor profiles, upcoming events, and admission forms.',
             techStack: ['Pug', 'HTML5', 'CSS3', 'JavaScript', 'Node.js', 'Express.js', 'MongoDB'],
@@ -96,6 +101,7 @@ const projects = [
         id: 'project6',
         title: 'Flappy Pigeon – JavaScript Game',
         image: 'assets/game.PNG',
+        badge: 'Game Dev',
         details: {
             overview: 'Flappy Pigeon is a fast-paced, browser-based arcade game built entirely using vanilla JavaScript. The game challenges users to control a pigeon flying through a series of pipes.',
             techStack: ['JavaScript', 'HTML5 Canvas', 'CSS3'],
@@ -145,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createParticles();
     renderSkills();
     renderProjects();
+    createModalBackdrop();  // NEW
     renderAchievements();
     renderConnectLinks();
     setupTypingAnimation();
@@ -160,12 +167,10 @@ function setupCursor() {
     const follower = document.getElementById('cursorFollower');
     if (!cursor || !follower) return;
 
-    let fx = 0, fy = 0;
-    let mx = 0, my = 0;
+    let fx = 0, fy = 0, mx = 0, my = 0;
 
     document.addEventListener('mousemove', (e) => {
-        mx = e.clientX;
-        my = e.clientY;
+        mx = e.clientX; my = e.clientY;
         cursor.style.left = mx + 'px';
         cursor.style.top = my + 'px';
     });
@@ -179,7 +184,6 @@ function setupCursor() {
     }
     animateFollower();
 
-    // Scale on hover interactive elements
     const interactives = document.querySelectorAll('a, button, .project-card, .achievement-card, .connect-card, .skill-box');
     interactives.forEach(el => {
         el.addEventListener('mouseenter', () => {
@@ -209,7 +213,6 @@ function setupScrollReveal() {
             }
         });
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
     revealEls.forEach(el => observer.observe(el));
 }
 
@@ -224,7 +227,6 @@ function createParticles() {
         p.style.animationDuration = `${12 + Math.random() * 10}s`;
         p.style.width = `${1 + Math.random() * 2}px`;
         p.style.height = p.style.width;
-        // Random accent colors
         const colors = ['#7c6af7', '#e85d9e', '#38e8c6'];
         p.style.background = colors[Math.floor(Math.random() * colors.length)];
         particlesContainer.appendChild(p);
@@ -248,66 +250,118 @@ function renderSkills() {
     });
 }
 
-// ===== RENDER PROJECTS =====
+// ===== RENDER PROJECTS (NEW) =====
 function renderProjects() {
     projects.forEach((project, index) => {
         const card = document.createElement('div');
         card.className = 'project-card';
-        card.setAttribute('onclick', `openModal('${project.id}')`);
-        card.style.animation = `scaleIn 0.5s ease-out ${index * 0.08}s forwards`;
+        card.style.animationDelay = `${index * 0.09}s`;
 
         card.innerHTML = `
-            <img src="${project.image}" alt="${project.title}" loading="lazy"
-                 onerror="this.onerror=null; this.src='${svgFallback(project.title, 280, 180)}'">
-            <div class="project-card-overlay"><div class="view-btn">View Project</div></div>
-            <h3>${project.title}</h3>
+            <div class="card-image-wrap">
+                <img src="${project.image}" alt="${project.title}" loading="lazy"
+                     onerror="this.onerror=null; this.src='${svgFallback(project.title, 280, 180)}'">
+                <span class="card-badge">${project.badge}</span>
+                <div class="card-overlay">
+                    <button class="overlay-btn primary" onclick="openProjectModal('${project.id}'); event.stopPropagation();">View Details</button>
+                    ${project.details.liveDemo ? `<a class="overlay-btn secondary" href="${project.details.liveDemo}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Live Demo ↗</a>` : ''}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-title">${project.title}</div>
+                <p class="card-desc">${project.details.overview}</p>
+                <div class="card-tags">
+                    ${project.details.techStack.slice(0, 3).map(t => `<span class="card-tag">${t}</span>`).join('')}
+                </div>
+            </div>
         `;
 
+        card.addEventListener('click', () => openProjectModal(project.id));
         projectGrid.appendChild(card);
-        createProjectModal(project);
     });
 }
 
-// ===== CREATE PROJECT MODALS =====
-function createProjectModal(project) {
-    const modal = document.createElement('div');
-    modal.id = project.id;
-    modal.className = 'project-modal';
+// ===== CREATE SINGLE MODAL BACKDROP (NEW) =====
+function createModalBackdrop() {
+    const backdrop = document.createElement('div');
+    backdrop.id = 'projectModalBackdrop';
+    backdrop.className = 'project-modal-backdrop';
+    backdrop.innerHTML = `
+        <div class="project-modal-panel" id="projectModalPanel">
+            <div class="project-modal-hero">
+                <img id="pModalImg" src="" alt="">
+                <div class="project-modal-hero-gradient"></div>
+                <button class="project-modal-close" onclick="closeProjectModal()">✕</button>
+            </div>
+            <div class="project-modal-body">
+                <div class="project-modal-title" id="pModalTitle"></div>
 
-    modal.innerHTML = `
-        <div class="project-content">
-            <span class="close-btn" onclick="closeModal('${project.id}')">&times;</span>
-            <h1>${project.title}</h1>
+                <div class="project-modal-label">Overview</div>
+                <p class="project-modal-overview" id="pModalOverview"></p>
 
-            <h2>Overview</h2>
-            <p>${project.details.overview}</p>
+                <div class="project-modal-label">Tech Stack</div>
+                <div class="project-modal-tags" id="pModalTechStack"></div>
 
-            <h2>Tech Stack</h2>
-            <ul>
-                ${project.details.techStack.map(t => `<li>${t}</li>`).join('')}
-            </ul>
+                <div class="project-modal-label">Key Features</div>
+                <ul class="project-modal-features" id="pModalFeatures"></ul>
 
-            <h2>Key Features</h2>
-            <ul class="features-list">
-                ${project.details.features.map(f => `<li>${f}</li>`).join('')}
-            </ul>
-
-            <h2>Links</h2>
-            <div class="modal-links">
-                <a href="${project.details.github}" target="_blank" rel="noopener noreferrer" class="modal-link github">
-                    <img src="assets/github.svg" alt="GitHub">
-                    GitHub Repository
-                </a>
-                ${project.details.liveDemo ? `
-                <a href="${project.details.liveDemo}" target="_blank" rel="noopener noreferrer" class="modal-link live">
-                    🔗 Live Demo
-                </a>` : ''}
+                <div class="project-modal-label">Links</div>
+                <div class="project-modal-links" id="pModalLinks"></div>
             </div>
         </div>
     `;
 
-    modalsContainer.appendChild(modal);
+    document.body.appendChild(backdrop);
+
+    // Close on backdrop click
+    backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) closeProjectModal();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeProjectModal();
+    });
 }
+
+// ===== OPEN PROJECT MODAL (NEW) =====
+window.openProjectModal = function(id) {
+    const p = projects.find(x => x.id === id);
+    if (!p) return;
+
+    document.getElementById('pModalImg').src = p.image;
+    document.getElementById('pModalImg').alt = p.title;
+    document.getElementById('pModalTitle').textContent = p.title;
+    document.getElementById('pModalOverview').textContent = p.details.overview;
+
+    document.getElementById('pModalTechStack').innerHTML =
+        p.details.techStack.map(t => `<span class="pmodal-tag">${t}</span>`).join('');
+
+    document.getElementById('pModalFeatures').innerHTML =
+        p.details.features.map(f => `<li>${f}</li>`).join('');
+
+    let linksHTML = `
+        <a class="pmodal-link github" href="${p.details.github}" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub Repo
+        </a>`;
+
+    if (p.details.liveDemo) {
+        linksHTML += `<a class="pmodal-link live" href="${p.details.liveDemo}" target="_blank" rel="noopener">🔗 Live Demo</a>`;
+    }
+    document.getElementById('pModalLinks').innerHTML = linksHTML;
+
+    const backdrop = document.getElementById('projectModalBackdrop');
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+};
+
+// ===== CLOSE PROJECT MODAL (NEW) =====
+window.closeProjectModal = function() {
+    const backdrop = document.getElementById('projectModalBackdrop');
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+};
 
 // ===== RENDER ACHIEVEMENTS =====
 function renderAchievements() {
@@ -426,7 +480,7 @@ function setupImageHandling() {
     }
 }
 
-// ===== MODAL FUNCTIONS =====
+// ===== OLD MODAL FUNCTIONS (kept for achievements) =====
 window.openModal = function (id) {
     const modal = document.getElementById(id);
     if (modal) {
